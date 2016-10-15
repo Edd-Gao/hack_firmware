@@ -7,7 +7,10 @@ from datetime import datetime
 import wave  
 import requests
 import json
-import os
+import subprocess as sp
+
+IP = "127.0.0.1"
+#IP = "121.201.24.49"
   
 #define of params  
 NUM_SAMPLES = 2000
@@ -62,14 +65,15 @@ def record_wave():
             save_wave_file(filename, save_buffer)
 
             files = {'voice': open(filename, 'rb')}
-            resp = requests.post("http://127.0.0.1:5000/upload_voice", files=files)
+            resp = requests.post("http://" + IP +  ":5000/upload_voice", files=files)
             print resp.content
             json_resp = json.loads(resp.content)
             if json_resp['code'] == 0:
-                r = requests.get("http://127.0.0.1:5000/voice/"+json_resp['save_file_name'], stream=True)
+                r = requests.get("http://" + IP +  ":5000/voice/"+json_resp['save_file_name'], 
+                        stream=True)
                 with open("temp.wav", "wb") as f:
                     f.write(r.raw.read())
-                os.popen2('play ' + 'temp.wav')
+                sp.call('play ' + 'temp.wav')
                 #resp_f = wave.open(r"./temp.wav", "r")
                 #say(resp_f)
             
