@@ -7,12 +7,12 @@ from datetime import datetime
 import wave  
 import requests
 import json
-from . import say
+import os
   
 #define of params  
-NUM_SAMPLES = 2000  
+NUM_SAMPLES = 2000
 framerate = 8000  
-channels = 1  
+channels = 1
 sampwidth = 2  
 #record time  
 TIME = 10  
@@ -49,7 +49,7 @@ def record_wave():
         print len(wave_data[0])
         print np.mean(np.abs(wave_data[0]))
 
-        if np.mean(np.abs(wave_data[0])) > 1400:
+        if np.mean(np.abs(wave_data[0])) > 1800:
             save_buffer.append(string_audio_data) 
             print len(save_buffer)
             isEnd = False
@@ -62,13 +62,16 @@ def record_wave():
             save_wave_file(filename, save_buffer)
 
             files = {'voice': open(filename, 'rb')}
-            resp = requests.post("http://127.0.0.1:5000/upload", files=files)
+            resp = requests.post("http://127.0.0.1:5000/upload_voice", files=files)
             print resp.content
             json_resp = json.loads(resp.content)
             if json_resp['code'] == 0:
-                r = requests.get("http://127.0.0.1:5000/voice/"+filename)
-                r.content
-                say(r)
+                r = requests.get("http://127.0.0.1:5000/voice/"+json_resp['save_file_name'], stream=True)
+                with open("temp.wav", "wb") as f:
+                    f.write(r.raw.read())
+                os.popen2('play ' + 'temp.wav')
+                #resp_f = wave.open(r"./temp.wav", "r")
+                #say(resp_f)
             
 
             save_buffer = []  

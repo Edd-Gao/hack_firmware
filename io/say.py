@@ -3,19 +3,18 @@
 import pyaudio
 import wave 
 
+
 def say(f):
     #define stream chunk   
-    chunk = 1024 
+    chunk = 1024
+    
 
-    #f = wave.open(r"./app/Hack.wav", "rb")
+    f = wave.open(r"temp.wav", "rb")
 
     #instantiate PyAudio  
     p = pyaudio.PyAudio()
     #open stream  
-    stream = p.open(format = p.get_format_from_width(f.getsampwidth()),
-            channels = f.getnchannels(), 
-            rate = f.getframerate(),
-            output = True)
+    stream = p.open(format = p.get_format_from_width())#f.getsampwidth()),
 
     #read data  
     data = f.readframes(chunk)
@@ -31,3 +30,6 @@ def say(f):
 
     #close PyAudio  
     p.terminate()
+
+if __name__ == '__main__':
+    say(1)
