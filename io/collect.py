@@ -9,6 +9,7 @@ import requests
 import json
 import soundfile as sf
 import sounddevice as sd
+import time
 
 
 IP = "127.0.0.1"
@@ -54,13 +55,14 @@ def record_wave():
         print len(wave_data[0])
         print np.mean(np.abs(wave_data[0]))
 
-        if np.mean(np.abs(wave_data[0])) > 1800:
-            save_buffer.append(string_audio_data)
-            print len(save_buffer)
+        if np.mean(np.abs(wave_data[0])) > 1200:
             isEnd = False
-        else:
+        elif np.mean(np.abs(wave_data[0])) < 700:
             isEnd = True
 
+        if isEnd == False:
+            save_buffer.append(string_audio_data)
+            print len(save_buffer)
 
         if len(save_buffer) != 0 and isEnd == True:
             filename = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")+".wav"
@@ -81,8 +83,16 @@ def record_wave():
                 with open("temp.wav", "wb") as f:
                     f.write(r.raw.read())
                 data, fs = sf.read("temp.wav")
+                stream.stop_stream()
                 sd.play(data, fs)
+                time.sleep(len(data)/float(fs))
+
+                stream.start_stream()
             print filename, "saved"
+
+            isEnd = False
+            save_buffer = []
+
 
         print '.'
 
