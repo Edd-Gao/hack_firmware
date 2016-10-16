@@ -10,7 +10,7 @@ import time
 #IP = "127.0.0.1"
 IP = "121.201.24.49"
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 classfier = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 color = (0, 0, 0)
 
@@ -27,10 +27,11 @@ def main():
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         cv2.equalizeHist(gray, gray)
         faceRects = classfier.detectMultiScale(gray, 1.3, 5,cv2.CASCADE_SCALE_IMAGE, minSize)
-        if len(faceRects) > 0 & i == 0:
-            cv2.imwrite("face.jpg", frame)
-            file = {'image': open("face.jpg", "rb")}
-            threading.Thread(target=check_image, args=(file,)).start()
+        if len(faceRects) > 0:
+            if i == 0:
+	   	 cv2.imwrite("face.jpg", frame)
+           	 file = {'image': open("face.jpg", "rb")}
+           	 threading.Thread(target=check_image, args=(file,)).start()
 
             for faceRect in faceRects:
                 x, y, w, h = faceRect

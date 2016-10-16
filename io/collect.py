@@ -12,8 +12,8 @@ import sounddevice as sd
 import time
 
 
-IP = "127.0.0.1"
-#IP = "121.201.24.49"
+#IP = "127.0.0.1"
+IP = "121.201.24.49"
 
 #define of params
 NUM_SAMPLES = 2000
